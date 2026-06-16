@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MorningSun</string>
+    <string name="app_slogan_en">Life is a long road. Walk it your way.</string>
+    <string name="app_slogan_cn">人生路很长，走你自己的路。</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_habits">Habits</string>
+    <string name="nav_checkin">Check In</string>
+    <string name="nav_diary">Diary</string>
+    <string name="nav_profile">Profile</string>
+</resources>
