@@ -8,19 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.presentation.localization.LocalAppStrings
 import com.morningsun.app.presentation.localization.stringsFor
 import com.morningsun.app.presentation.navigation.MorningSunNavHost
+import com.morningsun.app.presentation.ui.screens.AuthScreen
 import com.morningsun.app.presentation.ui.screens.LwaySplashScreen
 import com.morningsun.app.presentation.ui.theme.MorningSunTheme
 import com.morningsun.app.presentation.viewmodel.AppSettingsViewModel
+import com.morningsun.app.presentation.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,8 +33,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val settingsViewModel: AppSettingsViewModel = hiltViewModel()
+            val authViewModel: AuthViewModel = hiltViewModel()
             val settings by settingsViewModel.settings.collectAsState()
+            val authState by authViewModel.uiState.collectAsState()
             var showSplash by remember { mutableStateOf(true) }
+            var isAuthenticated by remember { mutableStateOf(authState.currentUser != null) }
+
+            LaunchedEffect(authState.currentUser) {
+                if (authState.currentUser != null) {
+                    isAuthenticated = true
+                }
+            }
 
             if (showSplash) {
                 LwaySplashScreen(onFinished = { showSplash = false })
@@ -44,12 +56,21 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            MorningSunNavHost(
-                                languageMode = settings.languageMode,
-                                themeMode = settings.themeMode,
-                                onThemeModeChange = settingsViewModel::setThemeMode,
-                                onLanguageModeChange = settingsViewModel::setLanguageMode
-                            )
+                            if (isAuthenticated) {
+                                MorningSunNavHost(
+                                    languageMode = settings.languageMode,
+                                    themeMode = settings.themeMode,
+                                    onThemeModeChange = settingsViewModel::setThemeMode,
+                                    onLanguageModeChange = settingsViewModel::setLanguageMode
+                                )
+                            } else {
+                                AuthScreen(
+                                    isLoading = authState.isLoading,
+                                    errorMessage = authState.errorMessage,
+                                    onSubmit = authViewModel::submit,
+                                    onModeChanged = authViewModel::clearError
+                                )
+                            }
                         }
                     }
                 }

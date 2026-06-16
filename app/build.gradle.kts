@@ -82,6 +82,11 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.48.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
+    // Firebase Auth. The Google Services plugin can be enabled after adding google-services.json.
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")

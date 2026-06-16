@@ -8,10 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,46 +64,40 @@ fun LwaySplashScreen(
                 exit = fadeOut(animationSpec = tween(SPLASH_FADE_MS)),
                 modifier = Modifier.align(Alignment.Center)
             ) {
-                Text(
-                    text = "Lway",
-                    style = TextStyle(
-                        color = Color(0xFFE8E8E8),
-                        fontSize = 38.sp,
-                        fontWeight = FontWeight.Light,
-                        fontFamily = FontFamily.SansSerif,
-                        letterSpacing = 8.sp
-                    )
-                )
-            }
-
-            AnimatedVisibility(
-                visible = contentVisible,
-                enter = fadeIn(animationSpec = tween(SPLASH_FADE_MS)),
-                exit = fadeOut(animationSpec = tween(SPLASH_FADE_MS)),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(start = 32.dp, top = 0.dp, end = 32.dp, bottom = 148.dp)
-            ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 28.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     Text(
+                        text = "Lway",
+                        style = TextStyle(
+                            color = Color(0xFFF2F2F2),
+                            fontSize = 68.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = FontFamily.Monospace,
+                            letterSpacing = 16.sp,
+                            textAlign = TextAlign.Center
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
                         text = "Life is a long road. Walk it your way.",
-                        color = Color(0xFF8E8E93),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Light,
-                        letterSpacing = 1.2.sp,
+                        color = Color(0xFFD7D7D9),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 1.4.sp,
                         textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "人生路漫漫，走你自己的路。",
-                        color = Color(0xFF8E8E93),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Light,
-                        letterSpacing = 1.sp,
+                        text = "\u4EBA\u751F\u8DEF\u6F2B\u6F2B\uFF0C\u8D70\u4F60\u81EA\u5DF1\u7684\u8DEF\u3002",
+                        color = Color(0xFFB8B8BD),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 1.2.sp,
                         textAlign = TextAlign.Center
                     )
                 }
