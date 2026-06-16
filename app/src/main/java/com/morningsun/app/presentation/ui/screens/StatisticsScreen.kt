@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.YearlyHeatmap
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.HeatmapLevel0
 import com.morningsun.app.presentation.ui.theme.HeatmapLevel1
 import com.morningsun.app.presentation.ui.theme.HeatmapLevel2
@@ -55,14 +56,15 @@ fun StatisticsScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Yearly Statistics") },
+                title = { Text(strings.yearlyStatistics) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = strings.back)
                     }
                 }
             )
@@ -96,16 +98,16 @@ fun StatisticsScreen(
                                 .padding(20.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            StatisticSummaryItem("${uiState.currentStreak}", "Streak")
-                            StatisticSummaryItem("${uiState.yearlyHeatmap.size}", "Days")
-                            StatisticSummaryItem("${uiState.yearlyHeatmap.sumOf { it.totalMinutes } / 60}h", "Hours")
+                            StatisticSummaryItem("${uiState.currentStreak}", strings.streak)
+                            StatisticSummaryItem("${uiState.yearlyHeatmap.size}", strings.days)
+                            StatisticSummaryItem("${uiState.yearlyHeatmap.sumOf { it.totalMinutes } / 60}h", strings.hours)
                         }
                     }
                 }
 
                 item {
                     Text(
-                        text = "${uiState.selectedYear} Heatmap",
+                        text = "${uiState.selectedYear} ${strings.heatmap}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -148,6 +150,7 @@ fun HeatmapCard(
     year: Int,
     heatmapData: Map<LocalDate, YearlyHeatmap>
 ) {
+    val strings = appStrings()
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -215,7 +218,7 @@ fun HeatmapCard(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Low", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(strings.low, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.size(4.dp))
                 listOf(0, 1, 2, 3, 4).forEach { level ->
                     Box(
@@ -226,7 +229,7 @@ fun HeatmapCard(
                     )
                     Spacer(modifier = Modifier.size(2.dp))
                 }
-                Text("High", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(strings.high, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
@@ -236,11 +239,12 @@ fun HeatmapCard(
 fun MonthStatsCard(
     heatmapData: List<YearlyHeatmap>
 ) {
+    val strings = appStrings()
     val monthlyData = heatmapData.groupBy { it.date.month }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Monthly Summary", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(strings.monthlySummary, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(12.dp))
 
             Month.entries.forEach { month ->
@@ -256,7 +260,7 @@ fun MonthStatsCard(
                 ) {
                     Text("${month.value}", style = MaterialTheme.typography.bodyMedium)
                     Row {
-                        Text("$days days", style = MaterialTheme.typography.bodyMedium, color = Primary)
+                        Text("$days ${strings.days}", style = MaterialTheme.typography.bodyMedium, color = Primary)
                         Spacer(modifier = Modifier.size(16.dp))
                         Text("${hours}h", style = MaterialTheme.typography.bodyMedium)
                     }

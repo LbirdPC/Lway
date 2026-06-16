@@ -17,14 +17,19 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +42,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.morningsun.app.domain.model.LanguageMode
+import com.morningsun.app.domain.model.ThemeMode
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.Accent
 import com.morningsun.app.presentation.ui.theme.Primary
 import com.morningsun.app.presentation.ui.theme.Secondary
@@ -44,11 +52,16 @@ import com.morningsun.app.presentation.viewmodel.HomeViewModel
 
 @Composable
 fun ProfileScreen(
+    languageMode: LanguageMode,
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    onLanguageModeChange: (LanguageMode) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToStatistics: () -> Unit,
     onNavigateToAchievements: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
 
     LazyColumn(
         modifier = Modifier
@@ -71,8 +84,8 @@ fun ProfileScreen(
                         tint = Primary
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("MorningSun User", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                    Text("Walk your way.", style = MaterialTheme.typography.bodyMedium, color = Primary)
+                    Text(strings.appUser, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                    Text(strings.slogan, style = MaterialTheme.typography.bodyMedium, color = Primary)
                 }
             }
         }
@@ -85,21 +98,21 @@ fun ProfileScreen(
                 StatCard(
                     modifier = Modifier.weight(1f),
                     value = "${uiState.currentStreak}",
-                    label = "Streak",
+                    label = strings.streak,
                     icon = Icons.Default.LocalFireDepartment,
                     color = Secondary
                 )
                 StatCard(
                     modifier = Modifier.weight(1f),
                     value = "${uiState.todayRecords.size}",
-                    label = "Today",
+                    label = strings.today,
                     icon = Icons.Default.CheckCircle,
                     color = Accent
                 )
                 StatCard(
                     modifier = Modifier.weight(1f),
                     value = "${uiState.habits.size}",
-                    label = "Habits",
+                    label = strings.habits,
                     icon = Icons.Default.List,
                     color = Primary
                 )
@@ -107,23 +120,92 @@ fun ProfileScreen(
         }
 
         item {
-            Text("Features", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            SettingsPanel(
+                languageMode = languageMode,
+                themeMode = themeMode,
+                onThemeModeChange = onThemeModeChange,
+                onLanguageModeChange = onLanguageModeChange
+            )
         }
 
         item {
-            ProfileMenuItem(Icons.Default.BarChart, "Yearly Statistics", "Review your heatmap and trends", onNavigateToStatistics)
+            Text(strings.features, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        }
+
+        item {
+            ProfileMenuItem(Icons.Default.BarChart, strings.yearlyStatistics, strings.reviewHeatmap, onNavigateToStatistics)
         }
         item {
-            ProfileMenuItem(Icons.Default.EmojiEvents, "Achievements", "See the milestones you have unlocked", onNavigateToAchievements)
+            ProfileMenuItem(Icons.Default.EmojiEvents, strings.achievements, strings.seeMilestones, onNavigateToAchievements)
         }
         item {
-            ProfileMenuItem(Icons.Default.Cloud, "Cloud Sync", "Sync stubs are ready for later integration") { }
+            ProfileMenuItem(Icons.Default.Cloud, strings.cloudSync, strings.cloudSyncSubtitle) { }
         }
         item {
-            ProfileMenuItem(Icons.Default.FileDownload, "Export Data", "Export data as Markdown or CSV") { }
+            ProfileMenuItem(Icons.Default.FileDownload, strings.exportData, strings.exportDataSubtitle) { }
         }
-        item {
-            ProfileMenuItem(Icons.Default.Settings, "Settings", "Notification time, theme, and more") { }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SettingsPanel(
+    languageMode: LanguageMode,
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    onLanguageModeChange: (LanguageMode) -> Unit
+) {
+    val strings = appStrings()
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Settings, contentDescription = null, tint = Primary)
+                Spacer(modifier = Modifier.size(12.dp))
+                Column {
+                    Text(strings.settings, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(strings.settingsSubtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(strings.appearance, style = MaterialTheme.typography.labelLarge)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(
+                        selected = themeMode == ThemeMode.LIGHT,
+                        onClick = { onThemeModeChange(ThemeMode.LIGHT) },
+                        label = { Text(strings.light) },
+                        leadingIcon = { Icon(Icons.Default.LightMode, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    )
+                    FilterChip(
+                        selected = themeMode == ThemeMode.DARK,
+                        onClick = { onThemeModeChange(ThemeMode.DARK) },
+                        label = { Text(strings.dark) },
+                        leadingIcon = { Icon(Icons.Default.DarkMode, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    )
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(strings.language, style = MaterialTheme.typography.labelLarge)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(
+                        selected = languageMode == LanguageMode.EN,
+                        onClick = { onLanguageModeChange(LanguageMode.EN) },
+                        label = { Text(strings.english) },
+                        leadingIcon = { Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    )
+                    FilterChip(
+                        selected = languageMode == LanguageMode.ZH,
+                        onClick = { onLanguageModeChange(LanguageMode.ZH) },
+                        label = { Text(strings.chinese) },
+                        leadingIcon = { Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    )
+                }
+            }
         }
     }
 }

@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.Achievement
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.Accent
 import com.morningsun.app.presentation.ui.theme.Primary
 import com.morningsun.app.presentation.ui.theme.Secondary
@@ -61,15 +62,16 @@ fun AchievementsScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
     val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Achievements") },
+                title = { Text(strings.achievementsTitle) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = strings.back)
                     }
                 }
             )
@@ -112,12 +114,12 @@ fun AchievementsScreen(
                             Spacer(modifier = Modifier.size(16.dp))
                             Column {
                                 Text(
-                                    text = "Unlocked ${uiState.unlockedCount} / ${uiState.achievements.size}",
+                                    text = strings.unlocked.format(uiState.unlockedCount, uiState.achievements.size),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
-                                    text = "Keep going, you are building consistency.",
+                                    text = strings.keepGoing,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -127,7 +129,7 @@ fun AchievementsScreen(
                 }
 
                 item {
-                    Text("Achievement List", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(strings.achievementList, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 }
 
                 items(uiState.achievements) { achievement ->
@@ -143,6 +145,7 @@ fun AchievementCard(
     achievement: Achievement,
     dateFormatter: DateTimeFormatter
 ) {
+    val strings = appStrings()
     val isUnlocked = achievement.unlockedAt != null
 
     Card(
@@ -192,7 +195,7 @@ fun AchievementCard(
                 if (isUnlocked && achievement.unlockedAt != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Unlocked on ${achievement.unlockedAt.format(dateFormatter)}",
+                        text = strings.unlockedOn.format(achievement.unlockedAt.format(dateFormatter)),
                         style = MaterialTheme.typography.labelSmall,
                         color = Accent
                     )
@@ -215,7 +218,7 @@ fun AchievementCard(
             }
 
             if (isUnlocked) {
-                Icon(Icons.Default.CheckCircle, contentDescription = "Unlocked", tint = Accent)
+                Icon(Icons.Default.CheckCircle, contentDescription = strings.unlocked.format(1, 1), tint = Accent)
             }
         }
     }

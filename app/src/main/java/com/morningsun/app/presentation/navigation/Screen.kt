@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.morningsun.app.presentation.localization.AppStrings
 
 sealed class Screen(
     val route: String,
@@ -28,4 +29,16 @@ sealed class Screen(
     companion object {
         val bottomNavItems = listOf(Home, Habits, CheckIn, Diary, Profile)
     }
+}
+
+fun Screen.localizedTitle(strings: AppStrings): String = when (this) {
+    Screen.Home -> strings.navHome
+    Screen.Habits -> strings.navHabits
+    Screen.CheckIn -> strings.navCheckIn
+    Screen.Diary -> strings.navDiary
+    Screen.Profile -> strings.navProfile
+    Screen.HabitDetail -> strings.habitDetail
+    Screen.DiaryDetail -> strings.diaryDetail
+    Screen.Statistics -> strings.statistics
+    Screen.Achievements -> strings.achievements
 }

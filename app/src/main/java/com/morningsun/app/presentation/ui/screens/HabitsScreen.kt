@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.Habit
 import com.morningsun.app.domain.model.HabitCategory
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.ExerciseColor
 import com.morningsun.app.presentation.ui.theme.PostureColor
 import com.morningsun.app.presentation.ui.theme.Primary
@@ -62,15 +63,16 @@ fun HabitsScreen(
     onHabitClick: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Habits") },
+                title = { Text(strings.myHabits) },
                 actions = {
                     IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add habit")
+                        Icon(Icons.Default.Add, contentDescription = strings.addHabit)
                     }
                 }
             )
@@ -129,6 +131,7 @@ fun EmptyHabitsView(
     modifier: Modifier = Modifier,
     onAddClick: () -> Unit
 ) {
+    val strings = appStrings()
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -141,10 +144,10 @@ fun EmptyHabitsView(
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text("No habits yet", style = MaterialTheme.typography.titleMedium)
+        Text(strings.noHabits, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "Create your first habit to start building momentum.",
+            strings.noHabitsSubtitle,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -152,7 +155,7 @@ fun EmptyHabitsView(
         Button(onClick = onAddClick) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.size(8.dp))
-            Text("Add Habit")
+            Text(strings.addHabit)
         }
     }
 }
@@ -162,6 +165,7 @@ fun HabitCard(
     habit: Habit,
     onClick: () -> Unit
 ) {
+    val strings = appStrings()
     val categoryColor = when (habit.category) {
         HabitCategory.POSTURE -> PostureColor
         HabitCategory.TRADING -> TradingColor
@@ -198,7 +202,7 @@ fun HabitCard(
                 Text(habit.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "${getCategoryName(habit.category)} • ${habit.targetMinutes} min",
+                    "${getCategoryName(habit.category)} · ${habit.targetMinutes} ${strings.minutesShort}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -214,6 +218,7 @@ fun AddHabitDialog(
     onDismiss: () -> Unit,
     onConfirm: (Habit) -> Unit
 ) {
+    val strings = appStrings()
     var name by remember { mutableStateOf("") }
     var category by remember { mutableStateOf(HabitCategory.EXERCISE) }
     var targetMinutes by remember { mutableStateOf("30") }
@@ -221,13 +226,13 @@ fun AddHabitDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Habit") },
+        title = { Text(strings.addHabit) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Habit name") },
+                    label = { Text(strings.habitName) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -237,7 +242,7 @@ fun AddHabitDialog(
                         value = getCategoryName(category),
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Category") },
+                        label = { Text(strings.category) },
                         trailingIcon = {
                             IconButton(onClick = { categoryExpanded = true }) {
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
@@ -264,7 +269,7 @@ fun AddHabitDialog(
                 OutlinedTextField(
                     value = targetMinutes,
                     onValueChange = { input -> targetMinutes = input.filter(Char::isDigit) },
-                    label = { Text("Target minutes") },
+                    label = { Text(strings.targetMinutes) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -286,12 +291,12 @@ fun AddHabitDialog(
                 },
                 enabled = name.isNotBlank()
             ) {
-                Text("Save")
+                Text(strings.save)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(strings.cancel)
             }
         }
     )

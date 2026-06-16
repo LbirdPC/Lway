@@ -13,12 +13,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.morningsun.app.domain.model.LanguageMode
+import com.morningsun.app.domain.model.ThemeMode
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.screens.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MorningSunNavHost() {
+fun MorningSunNavHost(
+    languageMode: LanguageMode,
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    onLanguageModeChange: (LanguageMode) -> Unit
+) {
     val navController = rememberNavController()
+    val strings = appStrings()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
@@ -39,10 +48,10 @@ fun MorningSunNavHost() {
                             icon = {
                                 Icon(
                                     imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon,
-                                    contentDescription = screen.title
+                                    contentDescription = screen.localizedTitle(strings)
                                 )
                             },
-                            label = { Text(screen.title) },
+                            label = { Text(screen.localizedTitle(strings)) },
                             selected = selected,
                             onClick = {
                                 navController.navigate(screen.route) {
@@ -97,6 +106,10 @@ fun MorningSunNavHost() {
 
             composable(Screen.Profile.route) {
                 ProfileScreen(
+                    languageMode = languageMode,
+                    themeMode = themeMode,
+                    onThemeModeChange = onThemeModeChange,
+                    onLanguageModeChange = onLanguageModeChange,
                     onNavigateToStatistics = {
                         navController.navigate(Screen.Statistics.route)
                     },

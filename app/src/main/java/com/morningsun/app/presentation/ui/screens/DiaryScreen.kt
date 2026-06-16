@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.DiaryEntry
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.Primary
 import com.morningsun.app.presentation.ui.theme.Secondary
 import com.morningsun.app.presentation.viewmodel.DiaryViewModel
@@ -61,15 +62,16 @@ fun DiaryScreen(
     onDiaryClick: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Growth Diary") },
+                title = { Text(strings.diaryTitle) },
                 actions = {
                     IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add diary")
+                        Icon(Icons.Default.Add, contentDescription = strings.addDiary)
                     }
                 }
             )
@@ -128,6 +130,7 @@ fun EmptyDiaryView(
     modifier: Modifier = Modifier,
     onAddClick: () -> Unit
 ) {
+    val strings = appStrings()
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -140,10 +143,10 @@ fun EmptyDiaryView(
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text("No diary entries yet", style = MaterialTheme.typography.titleMedium)
+        Text(strings.noDiary, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "Write down your progress, reflection, and ideas.",
+            strings.noDiarySubtitle,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -151,7 +154,7 @@ fun EmptyDiaryView(
         Button(onClick = onAddClick) {
             Icon(Icons.Default.Edit, contentDescription = null)
             Spacer(modifier = Modifier.size(8.dp))
-            Text("Write Entry")
+            Text(strings.writeEntry)
         }
     }
 }
@@ -161,6 +164,7 @@ fun DiaryCard(
     diary: DiaryEntry,
     onClick: () -> Unit
 ) {
+    val strings = appStrings()
     val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd") }
     val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
 
@@ -235,7 +239,7 @@ fun DiaryCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Mood: ",
+                        text = "${strings.mood}: ",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -252,6 +256,7 @@ fun AddDiaryDialog(
     onDismiss: () -> Unit,
     onConfirm: (DiaryEntry) -> Unit
 ) {
+    val strings = appStrings()
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
     var mood by remember { mutableStateOf("") }
@@ -261,13 +266,13 @@ fun AddDiaryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Write Diary Entry") },
+        title = { Text(strings.writeEntry) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title") },
+                    label = { Text(strings.diaryEntryTitle) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -275,7 +280,7 @@ fun AddDiaryDialog(
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
-                    label = { Text("Content") },
+                    label = { Text(strings.content) },
                     minLines = 4,
                     maxLines = 8,
                     modifier = Modifier.fillMaxWidth()
@@ -285,7 +290,7 @@ fun AddDiaryDialog(
                     OutlinedTextField(
                         value = mood,
                         onValueChange = {},
-                        label = { Text("Mood") },
+                        label = { Text(strings.mood) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { moodExpanded = true }) {
@@ -313,7 +318,7 @@ fun AddDiaryDialog(
                 OutlinedTextField(
                     value = tags,
                     onValueChange = { tags = it },
-                    label = { Text("Tags (comma separated)") },
+                    label = { Text(strings.tags) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -336,12 +341,12 @@ fun AddDiaryDialog(
                 },
                 enabled = title.isNotBlank() && content.isNotBlank()
             ) {
-                Text("Save")
+                Text(strings.save)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(strings.cancel)
             }
         }
     )

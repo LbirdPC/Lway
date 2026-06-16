@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.HabitCategory
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.Accent
 import com.morningsun.app.presentation.ui.theme.ExerciseColor
 import com.morningsun.app.presentation.ui.theme.OnPrimary
@@ -61,10 +62,11 @@ fun CheckInScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val timerState by viewModel.timerState.collectAsState()
+    val strings = appStrings()
     var selectedHabitId by remember { mutableStateOf<Long?>(null) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Habit Check-in") }) }
+        topBar = { TopAppBar(title = { Text(strings.checkInTitle) }) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -110,7 +112,7 @@ fun CheckInScreen(
                         ) {
                             Icon(Icons.Default.Stop, contentDescription = null)
                             Spacer(modifier = Modifier.size(8.dp))
-                            Text("Stop")
+                            Text(strings.stop)
                         }
                     } else {
                         Row(
@@ -124,7 +126,7 @@ fun CheckInScreen(
                             ) {
                                 Icon(Icons.Default.PlayArrow, contentDescription = null)
                                 Spacer(modifier = Modifier.size(8.dp))
-                                Text("Start")
+                                Text(strings.start)
                             }
 
                             if (timerState.elapsedMinutes > 0) {
@@ -140,7 +142,7 @@ fun CheckInScreen(
                                 ) {
                                     Icon(Icons.Default.Check, contentDescription = null)
                                     Spacer(modifier = Modifier.size(8.dp))
-                                    Text("Save")
+                                    Text(strings.save)
                                 }
                             }
                         }
@@ -150,7 +152,7 @@ fun CheckInScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Choose a habit", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(strings.chooseHabit, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -202,11 +204,11 @@ fun CheckInScreen(
                                 )
                             }
                             if (isCompleted) {
-                                Icon(Icons.Default.CheckCircle, contentDescription = "Completed", tint = Accent)
+                                Icon(Icons.Default.CheckCircle, contentDescription = strings.completed, tint = Accent)
                             }
                             if (isSelected) {
                                 Spacer(modifier = Modifier.size(8.dp))
-                                Icon(Icons.Default.Timer, contentDescription = "Selected", tint = categoryColor)
+                                Icon(Icons.Default.Timer, contentDescription = strings.selected, tint = categoryColor)
                             }
                         }
                     }

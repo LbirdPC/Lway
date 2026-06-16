@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.Habit
 import com.morningsun.app.domain.model.HabitCategory
 import com.morningsun.app.domain.model.HabitRecord
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.Accent
 import com.morningsun.app.presentation.ui.theme.OnPrimary
 import com.morningsun.app.presentation.ui.theme.PostureColor
@@ -64,6 +65,7 @@ fun HomeScreen(
     onNavigateToAchievements: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
 
     LazyColumn(
         modifier = Modifier
@@ -79,18 +81,18 @@ fun HomeScreen(
             ) {
                 Column {
                     Text(
-                        text = "Life is a long road.",
+                        text = strings.homeTitle,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Walk it your way.",
+                        text = strings.homeSubtitle,
                         style = MaterialTheme.typography.titleMedium,
                         color = Primary
                     )
                 }
                 IconButton(onClick = onNavigateToAchievements) {
-                    Icon(Icons.Default.EmojiEvents, contentDescription = "Achievements", tint = Secondary)
+                    Icon(Icons.Default.EmojiEvents, contentDescription = strings.achievements, tint = Secondary)
                 }
             }
         }
@@ -114,7 +116,7 @@ fun HomeScreen(
                 ) {
                     Icon(Icons.Default.PlayCircle, contentDescription = null)
                     Spacer(modifier = Modifier.size(8.dp))
-                    Text("Achievements")
+                    Text(strings.achievements)
                 }
                 Button(
                     onClick = onNavigateToStatistics,
@@ -122,14 +124,14 @@ fun HomeScreen(
                 ) {
                     Icon(Icons.Default.BarChart, contentDescription = null)
                     Spacer(modifier = Modifier.size(8.dp))
-                    Text("Statistics")
+                    Text(strings.statistics)
                 }
             }
         }
 
         item {
             Text(
-                text = "Today's Habits",
+                text = strings.todaysHabits,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -146,6 +148,7 @@ fun HomeScreen(
 
 @Composable
 fun StreakCard(streak: Int) {
+    val strings = appStrings()
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Primary)
@@ -165,13 +168,13 @@ fun StreakCard(streak: Int) {
             Spacer(modifier = Modifier.size(16.dp))
             Column {
                 Text(
-                    text = "$streak days",
+                    text = "$streak ${strings.days}",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = OnPrimary
                 )
                 Text(
-                    text = "Current streak",
+                    text = strings.currentStreak,
                     style = MaterialTheme.typography.bodyMedium,
                     color = OnPrimary.copy(alpha = 0.8f)
                 )
@@ -185,6 +188,7 @@ fun TodayProgressCard(
     habits: List<Habit>,
     records: List<HabitRecord>
 ) {
+    val strings = appStrings()
     val completed = records.count { it.isCompleted }
     val total = habits.size
     val progress = if (total > 0) completed.toFloat() / total else 0f
@@ -195,7 +199,7 @@ fun TodayProgressCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Today's Progress", style = MaterialTheme.typography.titleMedium)
+                Text(strings.todaysProgress, style = MaterialTheme.typography.titleMedium)
                 Text("$completed / $total", style = MaterialTheme.typography.titleMedium, color = Primary)
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -217,6 +221,7 @@ fun HabitQuickCard(
     habit: Habit,
     isCompleted: Boolean
 ) {
+    val strings = appStrings()
     val categoryColor = when (habit.category) {
         HabitCategory.POSTURE -> PostureColor
         HabitCategory.TRADING -> TradingColor
@@ -256,7 +261,7 @@ fun HabitQuickCard(
             if (isCompleted) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Completed",
+                    contentDescription = strings.completed,
                     tint = Accent
                 )
             }

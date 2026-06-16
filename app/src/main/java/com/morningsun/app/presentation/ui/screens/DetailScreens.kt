@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morningsun.app.domain.model.HabitCategory
+import com.morningsun.app.presentation.localization.appStrings
 import com.morningsun.app.presentation.ui.theme.Accent
 import com.morningsun.app.presentation.ui.theme.ExerciseColor
 import com.morningsun.app.presentation.ui.theme.PostureColor
@@ -56,6 +57,7 @@ fun HabitDetailScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
     val habit = uiState.habits.find { it.id == habitId }
 
     val categoryColor = when (habit?.category) {
@@ -70,10 +72,10 @@ fun HabitDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(habit?.name ?: "Habit Detail") },
+                title = { Text(habit?.name ?: strings.habitDetail) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = strings.back)
                     }
                 }
             )
@@ -86,7 +88,7 @@ fun HabitDetailScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Habit not found")
+                Text(strings.habitNotFound)
             }
         } else {
             LazyColumn(
@@ -122,7 +124,7 @@ fun HabitDetailScreen(
                             Text(getCategoryName(habit.category), style = MaterialTheme.typography.bodyMedium, color = categoryColor)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "Target ${habit.targetMinutes} min / day",
+                                strings.targetPerDay.format(habit.targetMinutes),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -131,7 +133,7 @@ fun HabitDetailScreen(
                 }
 
                 item {
-                    Text("Today's Status", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(strings.todaysStatus, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 }
 
                 val todayRecord = uiState.todayRecords.find { it.habitId == habitId }
@@ -152,12 +154,12 @@ fun HabitDetailScreen(
                             Spacer(modifier = Modifier.size(16.dp))
                             Column {
                                 Text(
-                                    if (todayRecord?.isCompleted == true) "Completed" else "Not checked in yet",
+                                    if (todayRecord?.isCompleted == true) strings.completed else strings.notCheckedInYet,
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 if (todayRecord != null) {
                                     Text(
-                                        "Logged ${todayRecord.durationMinutes} minutes today",
+                                        strings.loggedToday.format(todayRecord.durationMinutes),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -179,16 +181,17 @@ fun DiaryDetailScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val strings = appStrings()
     val diary = uiState.diaries.find { it.id == diaryId }
     val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy MMM dd, EEE") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Diary Detail") },
+                title = { Text(strings.diaryDetail) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = strings.back)
                     }
                 }
             )
@@ -201,7 +204,7 @@ fun DiaryDetailScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Diary entry not found")
+                Text(strings.diaryNotFound)
             }
         } else {
             LazyColumn(
@@ -220,7 +223,7 @@ fun DiaryDetailScreen(
                 diary.mood?.let { mood ->
                     item {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Mood: ", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${strings.mood}: ", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(mood, style = MaterialTheme.typography.bodyMedium, color = getMoodColor(mood))
                         }
                     }
